@@ -44,12 +44,18 @@ class _HomeState extends State<Home> {
       ),
       body: ListView.builder(
         itemCount: _trips.length,
-        itemBuilder: (BuildContext, int index) {
+        itemBuilder: (BuildContext context, int index) {
           return Dismissible(
-            key: Key(_trips[index].id),
+            key: Key(_trips[index].id.toString()),
             child: _buildListTile(index),
             background: _buildCompleteTrip(),
             secondaryBackground: _buildRemoveTrip(),
+            onDismissed: (DismissDirection direction) {
+              direction == DismissDirection.startToEnd
+                  ? _markTripCompleted()
+                  : _deleteTrip();
+              setState(() => _trips.removeAt(index));
+            },
           );
         },
       ),
@@ -57,14 +63,41 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildListTile(index) {
-    return Container();
+    return ListTile(
+      title: Text(_trips[index].name),
+      subtitle: Text(_trips[index].location),
+      leading: const Icon(Icons.flight),
+      trailing: const Icon(Icons.fastfood),
+    );
   }
 
   Widget _buildCompleteTrip() {
-    return Container();
+    return Container(
+      color: Colors.green,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Icon(Icons.done, color: Colors.white),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildRemoveTrip() {
-    return Container();
+    return Container(
+      color: Colors.red,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: const [
+            Icon(Icons.delete, color: Colors.white),
+          ],
+        ),
+      ),
+    );
   }
 }
